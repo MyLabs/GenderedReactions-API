@@ -88,8 +88,8 @@ class Fda {
 		$client = new GuzzleHttp\Client();
 
 		//$urlAll = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:" . $drugGenericName . "&count=patient.reaction.reactionmeddrapt.exact";
-		$urlMale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:" . $drugGenericName . "+AND+patient.patientsex:1&count=patient.reaction.reactionmeddrapt.exact";
-		$urlFemale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:" . $drugGenericName . "+AND+patient.patientsex:2&count=patient.reaction.reactionmeddrapt.exact";
+		$urlMale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:" . $drugGenericName . "+AND+patient.patientsex:1&count=patient.reaction.reactionmeddrapt.exact&api_key=HhASVaQrzWcEEDhpEZdfOPiBtVggxepGbDviSuIg";
+		$urlFemale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:" . $drugGenericName . "+AND+patient.patientsex:2&count=patient.reaction.reactionmeddrapt.exact&api_key=HhASVaQrzWcEEDhpEZdfOPiBtVggxepGbDviSuIg";
 
 		$res = $client->get($urlMale, []);
 		$array = $res->json();
@@ -97,8 +97,8 @@ class Fda {
         if ($array['error']) {
             $error = $array['error'];
             if ($error['code'] == "NOT FOUND") {
-                $urlMale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:" . $drugGenericName . "+AND+patient.patientsex:1&count=patient.reaction.reactionmeddrapt.exact";
-                $urlFemale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:" . $drugGenericName . "+AND+patient.patientsex:2&count=patient.reaction.reactionmeddrapt.exact";
+                $urlMale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:" . $drugGenericName . "+AND+patient.patientsex:1&count=patient.reaction.reactionmeddrapt.exact&api_key=HhASVaQrzWcEEDhpEZdfOPiBtVggxepGbDviSuIg";
+                $urlFemale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:" . $drugGenericName . "+AND+patient.patientsex:2&count=patient.reaction.reactionmeddrapt.exact&api_key=HhASVaQrzWcEEDhpEZdfOPiBtVggxepGbDviSuIg";
 
                 $res = $client->get($urlMale, []);
                 $array = $res->json();

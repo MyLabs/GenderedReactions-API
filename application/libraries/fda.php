@@ -89,7 +89,7 @@ class Fda {
                 $res = $client->get($urlMale, []);
                 $array = $res->json();
 			} catch (Exception $e) {
-				exit;
+				exit('{"error":"not found"}');
 			}
 		}
 

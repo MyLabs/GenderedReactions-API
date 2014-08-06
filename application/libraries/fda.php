@@ -93,6 +93,18 @@ class Fda {
 
 		$res = $client->get($urlMale, []);
 		$array = $res->json();
+
+        if ($array['error']) {
+            $error = $array['error'];
+            if ($error['code'] == "NOT FOUND") {
+                $urlMale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:" . $drugGenericName . "+AND+patient.patientsex:1&count=patient.reaction.reactionmeddrapt.exact";
+                $urlFemale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:" . $drugGenericName . "+AND+patient.patientsex:2&count=patient.reaction.reactionmeddrapt.exact";
+
+                $res = $client->get($urlMale, []);
+                $array = $res->json();
+            }
+        }
+
 		$resultsMale = $array['results'];
 
 		$res = $client->get($urlFemale, []);

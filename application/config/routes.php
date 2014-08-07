@@ -52,6 +52,7 @@ $route['reset_password/(:any)/(:any)']	= "users/reset_password/$1/$2";
 
 // API stuff
 $route['drug/(:any)/(:any)'] = 'api/drug/$1/$2';
+$route['autocomplete'] = 'api/autocomplete';
 $route['autocomplete/(:any)'] = 'api/autocomplete/$1';
 
 // Contexts

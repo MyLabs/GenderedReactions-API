@@ -56,3 +56,6 @@ bonfire/.ideas
 
 # Ignore the installed.txt file
 public/install/installed.txt
+
+# Ignore .htaccess
+/.htaccess

@@ -9,6 +9,7 @@ class Fda {
 		$this->CI->load->model('drugs_model');
 		$this->CI->load->model('side_effects_model');
 		$this->CI->load->model('side_effects_lookup_model');
+		$this->CI->load->model('autocomplete_model');
 	}
 
 	function sideEffectId($sideEffectName) {
@@ -41,11 +42,28 @@ class Fda {
 		$result = mysql_query("SELECT * FROM drugs WHERE generic_name = '$drugName'");
 
 			if (!$result || mysql_num_rows($result) == 0) {
+				//the autocomplete stuff
+				$tempDrugName = str_replace('+', ' ', $drugName);
+				
+				$this->CI->autocomplete_model->where('name', $tempDrugName);
+				$count = $this->CI->autocomplete_model->count_all();
+				if($count == 0) {
+// 					$autocomplete_arr = array('name' => $tempDrugName);
+					$this->CI->autocomplete_model->insert_name($tempDrugName);
+					foreach ($brandName as $brand) {
+// 						$temparr = array('name' => $brand);
+						$this->CI->autocomplete_model->where('name', $brand);
+						$count = $this->CI->autocomplete_model->count_all();
+						if($count == 0) {
+							$this->CI->autocomplete_model->insert_name($brand);
+						}
+					}
+				}
+				//end of the autocomplete stuff
 				$arr = array('generic_name' => $drugName, 'brand_name' => json_encode($brandName));
 				$test = $this->CI->drugs_model->insert($arr);
 				return mysql_insert_id();
-			}
-			else {
+			} else {
 				$row = mysql_fetch_array($result);
 				return $row['id'];
 			}
@@ -76,8 +94,6 @@ class Fda {
 						$generic_name = isset($drug['openfda']['generic_name'])?$drug['openfda']['generic_name']:'';
 					}
 				}
-// 				$brand_name = $array['results'][0]['patient']['drug'][0]['openfda']['brand_name'];
-// 				$generic_name = $array['results'][0]['patient']['drug'][0]['openfda']['generic_name'];
 			} catch(Exception $e) {
 				exit('{"error":"not found"}');
 			}
@@ -89,7 +105,6 @@ class Fda {
 		$dbhost = '130.229.9.90';
 		$dbuser = 'train';
 		$dbpass = 'train';
-
 
 		$conn = mysql_connect($dbhost, $dbuser, $dbpass) or die ('Error connecting to mysql' . mysql_error());
 

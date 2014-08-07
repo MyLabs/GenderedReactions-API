@@ -39,4 +39,8 @@ class api extends REST_Controller
 		}
 		return $drug_array;
 	}
+	
+	public function autocomplete_get() {
+		
+	}
 }

@@ -27,5 +27,4 @@ class Drugs_model extends BF_Model
 		$query = $this->db->get();
 		return $query->result();
     }
-    
 }

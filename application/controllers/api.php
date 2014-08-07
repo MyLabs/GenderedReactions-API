@@ -15,6 +15,8 @@ class api extends REST_Controller
 			$this->response('no name provided', 403);
 		}
 		$name = $this->get('name');
+		$name = $this->fda->getNames($name)['generic_name'];
+		$name = str_replace(' ', '+', $name);
 		$this->load->model('drugs_model');
 		$this->load->library('fda');
 		
@@ -37,7 +39,7 @@ class api extends REST_Controller
 		foreach ($arr as $row) {
 			$drug_array['drug']['genericName'] = $row->generic_name;
 			$drug_array['drug']['brandNames'] = json_decode($row->brand_name, true);
-			$drug_array['drug']['adverseEffects'][] = array('event'=>$row->name,'alternatives'=>$row->alternatives,'count'=>$row->fda_count,'maleCount'=>$row->fda_count_male,'femaleCount'=>$row->fda_count_female);
+			$drug_array['drug']['adverseEffects'][] = array('event'=>$row->name,'alternatives'=>$row->alternatives,'altName'=>$row->alt_name,'count'=>$row->fda_count,'maleCount'=>$row->fda_count_male,'femaleCount'=>$row->fda_count_female);
 		}
 		return $drug_array;
 	}

@@ -59,7 +59,7 @@ class Drugs_model extends BF_Model
 // 		return $result;
 		
 		// if you want to query your primary data from the table 'tblanswers',
-		$this->db->select('a.generic_name, a.brand_name,b.fda_count, b.fda_count_female,b.fda_count_male,c.name,c.alternatives');
+		$this->db->select('a.generic_name, a.brand_name,b.fda_count, b.fda_count_female,b.fda_count_male,c.name,c.alternatives,c.alt_name');
 		$this->db->from('drugs a');
 		$this->db->where('a.generic_name', $name);
 		$this->db->join('side_effects_lookup b', 'b.drug_id = a.id', 'left');

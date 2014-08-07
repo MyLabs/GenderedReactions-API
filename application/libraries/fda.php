@@ -37,11 +37,11 @@ class Fda {
 			}
 	}
 
-	function drugId($drugName) {
+	function drugId($drugName, $brandName = array()) {
 		$result = mysql_query("SELECT * FROM drugs WHERE generic_name = '$drugName'");
 
 			if (!$result || mysql_num_rows($result) == 0) {
-				$arr = array('generic_name' => $drugName);
+				$arr = array('generic_name' => $drugName, 'brand_name' => json_encode($brandName));
 				$test = $this->CI->drugs_model->insert($arr);
 				return mysql_insert_id();
 			}
@@ -49,6 +49,29 @@ class Fda {
 				$row = mysql_fetch_array($result);
 				return $row['id'];
 			}
+	}
+	
+	function getNames($name) {
+		$client = new GuzzleHttp\Client();
+		
+		$nameUrl = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:" . $name . "+AND+patient.patientsex:1&limit=1&api_key=HhASVaQrzWcEEDhpEZdfOPiBtVggxepGbDviSuIg";
+		$brandUrl = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:" . $name . "+AND+patient.patientsex:1&limit=1&api_key=HhASVaQrzWcEEDhpEZdfOPiBtVggxepGbDviSuIg";
+		try {
+			$res = $client->get($nameUrl, []);
+			$array = $res->json();
+			$brand_name = $array['results'][0]['patient']['drug'][0]['openfda']['brand_name'];
+			$generic_name = $array['results'][0]['patient']['drug'][0]['openfda']['generic_name'];
+		} catch(Exception $e) {
+			try {
+				$res = $client->get($brandUrl, []);
+				$array = $res->json();
+				$brand_name = $array['results'][0]['patient']['drug'][0]['openfda']['brand_name'];
+				$generic_name = $array['results'][0]['patient']['drug'][0]['openfda']['generic_name'];
+			} catch(Exception $e) {
+				exit("well, fuck");
+			}
+		}
+		return array('generic_name'=>$generic_name[0], 'brand_name'=>$brand_name);		
 	}
 
 	function connect() {
@@ -66,16 +89,18 @@ class Fda {
 
 	function getDrug($drugGenericName) {
 		
+		$drugNames = $this->getNames($drugGenericName);
+		$drugGenericName = $drugNames['generic_name'];
+		$drugGenericName = str_replace(' ', '+', $drugGenericName);
+		
 		$client = new GuzzleHttp\Client();
 
 		$urlMale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:" . $drugGenericName . "+AND+patient.patientsex:1&count=patient.reaction.reactionmeddrapt.exact&api_key=HhASVaQrzWcEEDhpEZdfOPiBtVggxepGbDviSuIg";
 		$urlFemale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:" . $drugGenericName . "+AND+patient.patientsex:2&count=patient.reaction.reactionmeddrapt.exact&api_key=HhASVaQrzWcEEDhpEZdfOPiBtVggxepGbDviSuIg";
 		try {
 			$res = $client->get($urlMale, []);
-			exit;
 			$array = $res->json();
-	
-	        if ($array['error']) {
+	        if (isset($array['error'])) {
 	            $error = $array['error'];
 	            if ($error['code'] == "NOT FOUND") {
 	                
@@ -83,11 +108,10 @@ class Fda {
 	        }
 		} catch (Exception $e) {
 			try {
-			$urlMale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:" . $drugGenericName . "+AND+patient.patientsex:1&count=patient.reaction.reactionmeddrapt.exact&api_key=HhASVaQrzWcEEDhpEZdfOPiBtVggxepGbDviSuIg";
-	        $urlFemale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:" . $drugGenericName . "+AND+patient.patientsex:2&count=patient.reaction.reactionmeddrapt.exact&api_key=HhASVaQrzWcEEDhpEZdfOPiBtVggxepGbDviSuIg";
-	
-                $res = $client->get($urlMale, []);
-                $array = $res->json();
+				$urlMale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:" . $drugGenericName . "+AND+patient.patientsex:1&count=patient.reaction.reactionmeddrapt.exact&api_key=HhASVaQrzWcEEDhpEZdfOPiBtVggxepGbDviSuIg";
+		        $urlFemale = "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:" . $drugGenericName . "+AND+patient.patientsex:2&count=patient.reaction.reactionmeddrapt.exact&api_key=HhASVaQrzWcEEDhpEZdfOPiBtVggxepGbDviSuIg";
+	            $res = $client->get($altNameUrl, []);
+	            $array = $res->json();
 			} catch (Exception $e) {
 				exit('{"error":"not found"}');
 			}
@@ -99,7 +123,7 @@ class Fda {
 		$array = $res->json();
 		$resultsFemale = $array['results'];
 		
-		$drugId = $this->drugId($drugGenericName);
+		$drugId = $this->drugId($drugGenericName, $drugNames['brand_name']);
 		
 		for ($i = 0; $i < count($resultsMale); $i++) {
 			$currentSideEffect = $resultsMale[$i];

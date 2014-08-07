@@ -62,3 +62,5 @@ public/install/installed.txt
 
 #Ignore index.php
 /index.php
+index.php
+.htaccess

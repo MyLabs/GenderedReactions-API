@@ -15,8 +15,6 @@ class Autocomplete_model extends BF_model{
 			$this->like('name', $query , 'after');
 		}
 		$result = $this->find_all();
-		
-		var_dump($this->db->last_query());
 		return $result;
 	}
 	

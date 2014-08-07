@@ -68,7 +68,7 @@ class Fda {
 				$brand_name = $array['results'][0]['patient']['drug'][0]['openfda']['brand_name'];
 				$generic_name = $array['results'][0]['patient']['drug'][0]['openfda']['generic_name'];
 			} catch(Exception $e) {
-				exit("well, fuck");
+				exit('{"error":"not found"}');
 			}
 		}
 		return array('generic_name'=>$generic_name[0], 'brand_name'=>$brand_name);		

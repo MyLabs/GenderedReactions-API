@@ -9,8 +9,11 @@ class Autocomplete_model extends BF_model{
 		
 	}
 	
-	public function autocomplete() {
+	public function autocomplete($query = null) {
 		$this->select('name');
+		if($query) {
+			$this->like('name', $query);
+		}
 		$result = $this->find_all();
 		return $result;
 	}

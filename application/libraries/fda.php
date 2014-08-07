@@ -59,14 +59,24 @@ class Fda {
 		try {
 			$res = $client->get($nameUrl, []);
 			$array = $res->json();
-			$brand_name = $array['results'][0]['patient']['drug'][0]['openfda']['brand_name'];
-			$generic_name = $array['results'][0]['patient']['drug'][0]['openfda']['generic_name'];
+			foreach($array['results'][0]['patient']['drug'] as $drug) {
+				if(isset($drug['openfda'])) {
+					$brand_name = $drug['openfda']['brand_name'];
+					$generic_name = $drug['openfda']['generic_name'];
+				}
+			}
 		} catch(Exception $e) {
 			try {
 				$res = $client->get($brandUrl, []);
 				$array = $res->json();
-				$brand_name = $array['results'][0]['patient']['drug'][0]['openfda']['brand_name'];
-				$generic_name = $array['results'][0]['patient']['drug'][0]['openfda']['generic_name'];
+				foreach($array['results'][0]['patient']['drug'] as $drug) {
+					if(isset($drug['openfda'])) {
+						$brand_name = $drug['openfda']['brand_name'];
+						$generic_name = $drug['openfda']['generic_name'];
+					}
+				}
+// 				$brand_name = $array['results'][0]['patient']['drug'][0]['openfda']['brand_name'];
+// 				$generic_name = $array['results'][0]['patient']['drug'][0]['openfda']['generic_name'];
 			} catch(Exception $e) {
 				exit('{"error":"not found"}');
 			}
@@ -87,9 +97,7 @@ class Fda {
 		return $conn;
 	}
 
-	function getDrug($drugGenericName) {
-		
-		$drugNames = $this->getNames($drugGenericName);
+	function getDrug($drugNames) {
 		$drugGenericName = $drugNames['generic_name'];
 		$drugGenericName = str_replace(' ', '+', $drugGenericName);
 		

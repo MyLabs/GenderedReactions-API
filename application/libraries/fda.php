@@ -59,10 +59,11 @@ class Fda {
 		try {
 			$res = $client->get($nameUrl, []);
 			$array = $res->json();
+			if(isset($array))
 			foreach($array['results'][0]['patient']['drug'] as $drug) {
 				if(isset($drug['openfda'])) {
-					$brand_name = $drug['openfda']['brand_name'];
-					$generic_name = $drug['openfda']['generic_name'];
+					$brand_name = isset($drug['openfda']['brand_name'])?$drug['openfda']['brand_name']:'';
+					$generic_name = isset($drug['openfda']['generic_name'])?$drug['openfda']['generic_name']:'';
 				}
 			}
 		} catch(Exception $e) {
@@ -71,8 +72,8 @@ class Fda {
 				$array = $res->json();
 				foreach($array['results'][0]['patient']['drug'] as $drug) {
 					if(isset($drug['openfda'])) {
-						$brand_name = $drug['openfda']['brand_name'];
-						$generic_name = $drug['openfda']['generic_name'];
+						$brand_name = isset($drug['openfda']['brand_name'])?$drug['openfda']['brand_name']:'';
+						$generic_name = isset($drug['openfda']['generic_name'])?$drug['openfda']['generic_name']:'';
 					}
 				}
 // 				$brand_name = $array['results'][0]['patient']['drug'][0]['openfda']['brand_name'];

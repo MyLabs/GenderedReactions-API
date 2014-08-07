@@ -41,6 +41,8 @@ class api extends REST_Controller
 	}
 	
 	public function autocomplete_get() {
-		
+		$this->load->model('autocomplete_model');
+		$result = $this->autocomplete_model->autocomplete();
+		$this->response($result, 200);
 	}
 }

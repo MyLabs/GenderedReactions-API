@@ -52,6 +52,7 @@ $route['reset_password/(:any)/(:any)']	= "users/reset_password/$1/$2";
 
 // API stuff
 $route['drug/(:any)/(:any)'] = 'api/drug/$1/$2';
+$route['autocomplete'] = 'api/autocomplete';
 
 // Contexts
 $route[SITE_AREA .'/([a-z_]+)/(:any)/(:any)/(:any)/(:any)/(:any)']		= "$2/$1/$3/$4/$5/$6";

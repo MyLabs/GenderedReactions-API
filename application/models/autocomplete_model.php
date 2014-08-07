@@ -10,7 +10,7 @@ class Autocomplete_model extends BF_model{
 	}
 	
 	public function autocomplete() {
-		$this->select('*');
+		$this->select('name');
 		$result = $this->find_all();
 		return $result;
 	}

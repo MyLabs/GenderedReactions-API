@@ -23,4 +23,17 @@ class Autocomplete_model extends BF_model{
 		$result = $this->insert($arr);
 		return $result;
 	}
+	
+	public function trim() {
+		$this->select('*');
+		$results = $this->find_all();
+		foreach($results as $result) {
+			var_dump($result);
+			$name = trim($result->name);
+			$arr = array('name' => $name);
+			
+			$this->where('id', $result->id);
+			$test = $this->update('autocomplete', $arr);
+		}
+	}
 }

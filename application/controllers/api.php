@@ -25,13 +25,15 @@ class api extends REST_Controller
 			$drug_array = $this->do_structure($result);
 			$this->response($drug_array, 200);
 		}
-		
 	}
 	
 	public function do_structure($arr) {
 		$drug_array = array();
 		foreach ($arr as $row) {
-			$drug_array['drug']['genericName'] = $row->generic_name;
+			$generic_name = $row->generic_name;
+			$generic_name = strtolower($generic_name);
+			$generic_name = str_replace('+', ' ', $generic_name);
+			$drug_array['drug']['genericName'] = $generic_name;
 			$drug_array['drug']['brandNames'] = json_decode($row->brand_name, true);
 			$drug_array['drug']['adverseEffects'][] = array('event'=>$row->name,'alternatives'=>$row->alternatives,'altName'=>$row->alt_name,'count'=>$row->fda_count,'maleCount'=>$row->fda_count_male,'femaleCount'=>$row->fda_count_female);
 		}

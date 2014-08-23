@@ -38,7 +38,20 @@ class Autocomplete_model extends BF_model{
 	}
 	
 	public function read_xml() {
-		$xml = simplexml_load_file('../../assets/xml/atc-code-lx.xml');
-		var_dump($xml);
+		$xml = simplexml_load_file(base_url() . 'assets/xml/atc-code-lx.xml');
+		$drug_arr = $xml->simpleType->restriction->enumeration;
+		foreach($drug_arr as $drug) {
+			$english_name = $drug->annotation->documentation[1];
+			$english_name = preg_replace("/[^A-Za-z0-9 ]/", '', $english_name);
+			//now we have the proper english name, so save it.
+			$this->db->where('name', $english_name);
+			$this->db->from('autocomplete');
+			if($this->db->count_all_results() == 0) {
+				$arr = array('name' => $english_name);
+				$result = $this->insert($arr);
+				echo $result;
+			}
+			
+		}
 	}
 }

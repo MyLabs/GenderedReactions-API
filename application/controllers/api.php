@@ -57,6 +57,7 @@ class api extends REST_Controller
 	
 	public function xml_get() {
 		$this->load->model('autocomplete_model');
-		$this->autocomplete_model->read_xml();
+		$test = $this->autocomplete_model->read_xml();
+		$this->response($test, 200);
 	}
 }

@@ -36,4 +36,9 @@ class Autocomplete_model extends BF_model{
 			$test = $this->update('autocomplete', $arr);
 		}
 	}
+	
+	public function read_xml() {
+		$xml = simplexml_load_file('../../assets/xml/atc-code-lx.xml');
+		var_dump($xml);
+	}
 }

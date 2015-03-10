@@ -64,3 +64,5 @@ public/install/installed.txt
 /index.php
 index.php
 .htaccess
+.htaccess
+application/config/production/database.php
